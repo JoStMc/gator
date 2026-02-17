@@ -58,3 +58,25 @@ func handlerRegister(s *state, cmd command) error {
 	fmt.Println("User has been created!")
 	return nil
 } 
+
+func handlerList(s *state, cmd command) error {
+	users, err := s.db.ListUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("unable to list users: %v", err)
+	} 
+
+	if len(users) == 0 {
+	    fmt.Println("No users found.")
+		return nil
+	} 
+
+	for _, name := range users {
+		if name == s.cfg.CurrentUserName {
+		    fmt.Println("* ", name, "(current)")
+			continue
+		} 
+		fmt.Println("* ", name)
+	}
+
+	return nil
+} 
