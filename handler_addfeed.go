@@ -1,0 +1,40 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/JoStMc/gator/internal/database"
+	"github.com/google/uuid"
+)
+
+func handlerAddFeed(s *state, cmd command) error {
+	ctx := context.Background()
+	if len(cmd.args) < 2 {
+	    return fmt.Errorf("insufficent number of arguments")
+	} 
+
+	currentUser, err := s.db.GetUser(ctx, s.cfg.CurrentUserName)
+	if err != nil {
+	    return err
+	} 
+
+	currentTime := time.Now()
+	params := database.CreateFeedParams{ 
+		ID: uuid.New(),
+		CreatedAt: currentTime,
+		UpdatedAt: currentTime,
+		Name: cmd.args[0],
+		Url: cmd.args[1],
+		UserID: currentUser.ID,
+	}
+
+	feed, err := s.db.CreateFeed(ctx, params)
+	if err != nil {
+	    return err
+	} 
+
+	fmt.Println(feed)
+	return nil
+} 
