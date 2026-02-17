@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 
 	"github.com/JoStMc/gator/internal/config"
 )
@@ -12,16 +12,23 @@ func main() {
 	if err != nil {
 		log.Fatal("error reading config: ", err)
 	} 
-	fmt.Println(cfg)
+	currentState := state{cfg: &cfg} 
+	cmds := commands{cmdMap: make(map[string]func(*state, command) error)}
+	cmds.register("login", handlerLogin)
 
-	err = cfg.SetUser("me")
-	if err != nil {
-		log.Fatal("error setting user: ", err)
+	args := os.Args[1:]
+	if len(args) < 2 {
+		log.Fatal("insufficient number of arguments")
 	} 
-
-	cfg, err = config.Read()
+	cmd := command{name: args[0], args: args[1:]} 
+	err = cmds.run(&currentState, cmd)
 	if err != nil {
-		log.Fatal("error reading config: ", err)
+		log.Fatal("error running command: ", err)
 	} 
-	fmt.Println(cfg)
 }
+
+
+type state struct {
+    cfg  *config.Config
+} 
+
