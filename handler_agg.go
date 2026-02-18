@@ -1,18 +1,24 @@
 package main
 
-/*
 import (
 	"context"
 	"fmt"
 )
-*/
 
 func handlerAgg(s *state, cmd command) error {
-	/* feed, err := fetchFeed(context.Background(), "")
+	ctx := context.Background()
+	feeds, err := s.db.ListFeeds(ctx)
 	if err != nil {
 	    return err
 	} 
-	fmt.Println(feed) */
+
+	for _, feed := range feeds {
+		rssfeed, err := fetchFeed(ctx, feed.Url)
+		if err != nil {
+		    return err
+		} 
+		fmt.Println(rssfeed)
+	} 
+
 	return nil
 } 
-
