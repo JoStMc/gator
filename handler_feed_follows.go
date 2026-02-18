@@ -59,3 +59,24 @@ func handlerFollowFeed(s *state, cmd command, user database.User) error {
 	fmt.Printf("%s followed feed %s\n", s.cfg.CurrentUserName, followedFeed.Feedname)
 	return nil
 } 
+
+func handlerUnfollowFeed(s *state, cmd command, user database.User) error {
+	if len(cmd.args) < 1 {
+	    return fmt.Errorf("insufficient number of arguments")
+	} 
+	ctx := context.Background()
+
+	feed, err := s.db.GetFeed(ctx, cmd.args[0])
+	if err != nil {
+		return fmt.Errorf("unable to get feed: %w", err)
+	} 
+
+	err = s.db.UnfollowFeed(ctx, database.UnfollowFeedParams{
+												FeedID: feed.ID, 
+												UserID: user.ID,})
+	if err != nil {
+	    return err
+	} 
+	fmt.Printf("%s successfully unfollowed from feed %s\n", user.Name, feed.Name)
+	return nil
+} 
