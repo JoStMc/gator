@@ -9,8 +9,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerListUserFeeds(s *state, cmd command) error {
-	feedFollows, err := s.db.GetFeedFollowsForUser(context.Background(), s.cfg.CurrentUserName)
+func handlerListUserFeeds(s *state, cmd command, user database.User) error {
+	ctx := context.Background()
+
+	feedFollows, err := s.db.GetFeedFollowsForUser(ctx, user.ID)
 	if err != nil {
 		return fmt.Errorf("unable to get feed follows: %w", err)
 	} 
@@ -28,7 +30,7 @@ func handlerListUserFeeds(s *state, cmd command) error {
 	return nil
 } 
 
-func handlerFollowFeed(s *state, cmd command) error {
+func handlerFollowFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.args) < 1 {
 	    return fmt.Errorf("insufficient number of args")
 	} 
@@ -38,10 +40,6 @@ func handlerFollowFeed(s *state, cmd command) error {
 	feed, err := s.db.GetFeed(ctx, cmd.args[0])
 	if err != nil {
 		return fmt.Errorf("feed not found")
-	} 
-	user, err := s.db.GetUser(ctx, s.cfg.CurrentUserName)
-	if err != nil {
-	    return err
 	} 
 
 	currentTime := time.Now()

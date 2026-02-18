@@ -52,11 +52,11 @@ func (cmds *commands) registerCommands() {
 
 	cmds.register("agg", handlerAgg)
 
-	cmds.register("follow", handlerFollowFeed)
-	cmds.register("addfeed", handlerAddFeed)
+	cmds.register("follow", middlewareLoggedIn(handlerFollowFeed))
+	cmds.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	cmds.register("feeds", handlerListFeeds)
 
-	cmds.register("following", handlerListUserFeeds)
+	cmds.register("following", middlewareLoggedIn(handlerListUserFeeds))
 
 	cmds.register("reset", handlerReset)
 } 
