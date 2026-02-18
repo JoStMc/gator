@@ -25,13 +25,7 @@ func main() {
 	currentState := state{db: database.New(db), cfg: &cfg} 
 
 	cmds := commands{cmdMap: make(map[string]func(*state, command) error)}
-	cmds.register("login", handlerLogin)
-	cmds.register("register", handlerRegister)
-	cmds.register("users", handlerList)
-	cmds.register("agg", handlerAgg)
-	cmds.register("addfeed", handlerAddFeed)
-	cmds.register("feeds", handlerListFeeds)
-	cmds.register("reset", handlerReset)
+	cmds.registerCommands()
 
 	args := os.Args[1:]
 	if len(args) < 1 {
@@ -50,3 +44,19 @@ type state struct {
     cfg  *config.Config
 } 
 
+
+func (cmds *commands) registerCommands() {
+	cmds.register("login", handlerLogin)
+	cmds.register("register", handlerRegister)
+	cmds.register("users", handlerList)
+
+	cmds.register("agg", handlerAgg)
+
+	cmds.register("follow", handlerFollowFeed)
+	cmds.register("addfeed", handlerAddFeed)
+	cmds.register("feeds", handlerListFeeds)
+
+	cmds.register("following", handlerListUserFeeds)
+
+	cmds.register("reset", handlerReset)
+} 

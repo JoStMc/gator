@@ -15,3 +15,13 @@ SELECT * FROM users WHERE name = $1;
 
 -- name: ListUsers :many
 SELECT name FROM users;
+
+-- name: GetFeedFollowsForUser :many
+SELECT 
+    users.name AS userName,
+    feeds.name AS feedName,
+    feeds.url
+FROM users
+INNER JOIN feed_follows ON users.id = feed_follows.user_id
+INNER JOIN feeds ON feeds.id = feed_follows.feed_id
+WHERE users.name = $1;

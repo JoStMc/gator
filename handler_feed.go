@@ -35,18 +35,30 @@ func handlerAddFeed(s *state, cmd command) error {
 	    return err
 	} 
 
-	fmt.Println(feed)
+	followParams := database.CreateFeedFollowParams{
+		ID: uuid.New(),
+		CreatedAt: currentTime,
+		UpdatedAt: currentTime,
+		UserID: currentUser.ID,
+		FeedID: feed.ID,
+	}
+	_, err = s.db.CreateFeedFollow(ctx, followParams)
+	if err != nil {
+		return fmt.Errorf("unable to add to feed follows: %w", err)
+	} 
+
+	fmt.Printf("Feed added for %s: %s\n", s.cfg.CurrentUserName, feed.Name)
 	return nil
 } 
 
 func handlerListFeeds(s *state, cmd command) error {
-	rows, err := s.db.GetFeeds(context.Background())
+	rows, err := s.db.ListFeeds(context.Background())
 	if err != nil {
-	    return err
+		return err
 	} 
 
 	if len(rows) == 0 {
-	    fmt.Println("No feeds found.")
+		fmt.Println("No feeds found.")
 		return nil
 	} 
 

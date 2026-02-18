@@ -1,0 +1,63 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/JoStMc/gator/internal/database"
+	"github.com/google/uuid"
+)
+
+func handlerListUserFeeds(s *state, cmd command) error {
+	feedFollows, err := s.db.GetFeedFollowsForUser(context.Background(), s.cfg.CurrentUserName)
+	if err != nil {
+		return fmt.Errorf("unable to get feed follows: %w", err)
+	} 
+
+	if len(feedFollows) == 0 {
+	    fmt.Println("You are not following any feeds.")
+		return nil
+	} 
+
+	fmt.Printf("Feeds followed by %s\n", feedFollows[0].Username)
+	for _, feed := range feedFollows {
+		fmt.Printf("- %s\n    URL: %s\n\n", feed.Feedname, feed.Url)
+	} 
+
+	return nil
+} 
+
+func handlerFollowFeed(s *state, cmd command) error {
+	if len(cmd.args) < 1 {
+	    return fmt.Errorf("insufficient number of args")
+	} 
+
+	ctx := context.Background()
+
+	feed, err := s.db.GetFeed(ctx, cmd.args[0])
+	if err != nil {
+		return fmt.Errorf("feed not found")
+	} 
+	user, err := s.db.GetUser(ctx, s.cfg.CurrentUserName)
+	if err != nil {
+	    return err
+	} 
+
+	currentTime := time.Now()
+	params := database.CreateFeedFollowParams{
+		ID: uuid.New(),
+		CreatedAt: currentTime,
+		UpdatedAt: currentTime,
+		UserID: user.ID,
+		FeedID: feed.ID,
+	} 
+
+	followedFeed, err := s.db.CreateFeedFollow(ctx, params)
+	if err != nil {
+		return fmt.Errorf("unable to create feed follow: %w", err)
+	} 
+
+	fmt.Printf("%s followed feed %s\n", s.cfg.CurrentUserName, followedFeed.Feedname)
+	return nil
+} 
