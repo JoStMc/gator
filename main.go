@@ -57,6 +57,8 @@ func (cmds *commands) registerCommands() {
 	cmds.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	cmds.register("feeds", handlerListFeeds)
 
+	cmds.register("browse", handlerBrowse)
+
 	cmds.register("following", middlewareLoggedIn(handlerListUserFeeds))
 
 	cmds.register("reset", handlerReset)

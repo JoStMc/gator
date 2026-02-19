@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/JoStMc/gator/internal/database"
@@ -78,5 +79,34 @@ func handlerUnfollowFeed(s *state, cmd command, user database.User) error {
 	    return err
 	} 
 	fmt.Printf("%s successfully unfollowed from feed %s\n", user.Name, feed.Name)
+	return nil
+} 
+
+
+func handlerBrowse(s* state, cmd command) error {
+	limit := 2
+	if len(cmd.args) >= 1 {
+		var err error
+		limit, err = strconv.Atoi(cmd.args[0])
+		if err != nil {
+		    return err
+		} 
+	} 
+
+	userPosts, err := s.db.GetPostsForUser(context.Background())
+	if err != nil {
+	    return err
+	} 
+	limit = min(len(userPosts), limit)
+
+	fmt.Println("Posts fetched:")
+	fmt.Println()
+	for i := range limit {
+	    fmt.Println(userPosts[i].Title)
+	    fmt.Println(userPosts[i].Description)
+		fmt.Println()
+		fmt.Println()
+	} 
+
 	return nil
 } 
