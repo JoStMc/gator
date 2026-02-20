@@ -19,6 +19,10 @@ func handlerAgg(s *state, cmd command) error {
 	if err != nil {
 	    return err
 	} 
+	if timeBetweenRequests < time.Second {
+		fmt.Println("Time between requests too small. Minimum: 1 second")
+		return nil
+	} 
 	fmt.Println("Collecting feeds every ", timeBetweenRequests)
 	fmt.Println()
 	ticker := time.NewTicker(timeBetweenRequests)
