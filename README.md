@@ -4,7 +4,7 @@ This is an RSS feed agregator backed by PostgreSQL.
 
 ## Setup
 
-The prerequisites are [PostgreSQL](https://www.postgresql.org/download/) and [Go](https://go.dev/dl/). For development, [goose](https://github.com/pressly/goose/) is used for migrations in `sql/schema` and [SQLC](github.com/sqlc-dev/sqlc/) for compiling queries in `sql/queries`.
+The prerequisites are [PostgreSQL](https://www.postgresql.org/download/) and [Go](https://go.dev/dl/). For development, [goose](https://github.com/pressly/goose/) is used for migrations in `sql/schema` and [SQLC](https://github.com/sqlc-dev/sqlc/) for compiling queries in `sql/queries`.
 
 After installing Postgres and starting the server (ex. `systemctl start postgresql`), run `psql` as postgres (ex. `sudo -u postgres psql`) and create a database (ex. `CREATE DATABASE gator;`); you may set the password using `ALTER USER postgres PASSWORD 'password';`.
 
